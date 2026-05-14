@@ -1,26 +1,31 @@
-# Hello World Assignment
+# Overview
 
-## Overview
+This project demonstrates a simple Python program that prints "Hello World" to the screen. The goal is to practice basic software development skills and further my learning as a software engineer by building, documenting, and sharing a simple application.
 
-This is a simple Python program that prints "Hello World" to the screen.
+This software was created to reinforce my understanding of the development workflow, including coding, documentation, version control, and video demonstration.
 
-## How to Run
+[Software Demo Video](https://youtu.be/rNRTbSkseTw)
 
-1. Make sure you have Python installed on your computer.
-2. Open a terminal or command prompt.
-3. Navigate to this folder.
-4. Run the following command:
+# Development Environment
 
-   python hello_world.py
+- Visual Studio Code
+- Git
+- Python 3.x
 
-## Video Demonstration
+# Programming Language
 
-[Replace this with your YouTube video link]
+Python
+ 
+# Useful Websites
 
-## Author
+- [Python Official Documentation](https://docs.python.org/3/)
+- [Markdown Guide](https://www.markdownguide.org/)
+- [GitHub Guides](https://guides.github.com/)
 
-[Your Name]
+# Author
 
-## Time Spent
+Joy Oyaleke
 
-[Enter the total time you spent on this assignment]
+# Time Spent
+
+35 min
