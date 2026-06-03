@@ -1,140 +1,241 @@
-# Simulate a cloud database connection (for Cloud Databases module)
-def connect_to_cloud_database():
-	"""
-	Simulate connecting to a cloud database service.
-	In a real-world scenario, this would use a cloud provider's SDK or connection string.
-	For example, connecting to AWS RDS, Azure SQL, or Google Cloud SQL.
-
-	Example for Azure SQL Database (using pyodbc):
-		import pyodbc
-		conn = pyodbc.connect(
-			'DRIVER={ODBC Driver 17 for SQL Server};'
-			'SERVER=your_server.database.windows.net;'
-			'DATABASE=your_db;UID=your_user;PWD=your_password'
-		)
-
-	Example for AWS RDS (using pymysql):
-		import pymysql
-		conn = pymysql.connect(
-			host='your-rds-endpoint',
-			user='your_user',
-			password='your_password',
-			database='your_db'
-		)
-
-	For this project, we use SQLite locally for demonstration.
-	"""
-	print("Connecting to cloud database... (simulation)")
-	# Place real cloud connection code here for production use
-	return True
 """
 hello_world.py
 
-A simple Python web app simulation with database interaction and comments for educational purposes.
+SQL Relational Database Demo: SQLite CRUD, Join, Aggregates, and Date Filtering
+Author: Joy Oyaleke
 """
 
-"""
-hello_world.py
-
-MongoDB Atlas cloud database CLI demo with two related collections: users and greetings.
-"""
-
-from pymongo import MongoClient
-from bson.objectid import ObjectId
+import sqlite3
 from datetime import datetime
 
-# Replace <db_password> with your actual password
-MONGO_URI = "mongodb+srv://JoyOyaleke:oluwatofunmi@clustercse341.0tc5kdx.mongodb.net/?appName=ClusterCSE341"
-DB_NAME = "cloud_demo"
+DB_NAME = "demo.db"
 
-def get_db():
-	"""Connect to MongoDB Atlas and return the database object."""
-	client = MongoClient(MONGO_URI)
-	db = client[DB_NAME]
-	return db
+
+def connect_db():
+    """Connect to the SQLite database (creates file if not exists)."""
+    return sqlite3.connect(DB_NAME)
+
+
+def create_tables(conn):
+    """Create users and orders tables."""
+    with conn:
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS users (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL,
+                email TEXT NOT NULL UNIQUE,
+                created_at TEXT NOT NULL
+            )
+        """)
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS orders (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
+                amount REAL NOT NULL,
+                order_date TEXT NOT NULL,
+                FOREIGN KEY(user_id) REFERENCES users(id)
+            )
+        """)
+
+
+def insert_user(conn, name, email):
+    """Insert a new user into the users table."""
+    with conn:
+        conn.execute(
+            "INSERT INTO users (name, email, created_at) VALUES (?, ?, ?)",
+            (name, email, datetime.now().isoformat()),
+        )
+
+
+def insert_order(conn, user_id, amount, order_date):
+    """Insert a new order for a user."""
+    with conn:
+        conn.execute(
+            "INSERT INTO orders (user_id, amount, order_date) VALUES (?, ?, ?)",
+            (user_id, amount, order_date),
+        )
+
+
+def update_user_email(conn, user_id, new_email):
+    """Update a user's email address."""
+    with conn:
+        conn.execute(
+            "UPDATE users SET email = ? WHERE id = ?",
+            (new_email, user_id),
+        )
+
+
+def delete_order(conn, order_id):
+    """Delete an order by its ID."""
+    with conn:
+        conn.execute("DELETE FROM orders WHERE id = ?", (order_id,))
+
+
+def get_all_users(conn):
+    """Retrieve and print all users."""
+    cur = conn.cursor()
+    cur.execute("SELECT id, name, email, created_at FROM users")
+    users = cur.fetchall()
+    print("\nAll Users:")
+    for u in users:
+        print(f"ID: {u[0]}, Name: {u[1]}, Email: {u[2]}, Created: {u[3]}")
+    return users
+
+
+def get_orders_for_user(conn, user_id):
+    """Retrieve and print all orders for a user."""
+    cur = conn.cursor()
+    cur.execute("SELECT id, amount, order_date FROM orders WHERE user_id = ?", (user_id,))
+    orders = cur.fetchall()
+    print(f"\nOrders for User {user_id}:")
+    for o in orders:
+        print(f"Order ID: {o[0]}, Amount: {o[1]}, Date: {o[2]}")
+    return orders
+
+
+def join_users_orders(conn):
+    """Perform a join between users and orders and print results."""
+    cur = conn.cursor()
+    cur.execute("""
+        SELECT users.name, orders.amount, orders.order_date
+        FROM users
+        JOIN orders ON users.id = orders.user_id
+    """)
+    results = cur.fetchall()
+    print("\nUser Orders (Join):")
+    for r in results:
+        print(f"User: {r[0]}, Amount: {r[1]}, Date: {r[2]}")
+    return results
+
+
+def aggregate_order_stats(conn):
+    """Use aggregate functions to summarize order data."""
+    cur = conn.cursor()
+    cur.execute("SELECT COUNT(*), AVG(amount), SUM(amount) FROM orders")
+    count, avg, total = cur.fetchone()
+    print(f"\nOrder Stats: Total Orders: {count}, Average Amount: {avg}, Total Amount: {total}")
+    return count, avg, total
+
+
+def filter_orders_by_date(conn, start_date, end_date):
+    """Filter orders within a date range."""
+    cur = conn.cursor()
+    cur.execute(
+        "SELECT id, user_id, amount, order_date FROM orders WHERE order_date BETWEEN ? AND ?",
+        (start_date, end_date),
+    )
+    results = cur.fetchall()
+    print(f"\nOrders from {start_date} to {end_date}:")
+    for r in results:
+        print(f"Order ID: {r[0]}, User ID: {r[1]}, Amount: {r[2]}, Date: {r[3]}")
+    return results
+
 
 def print_menu():
-	print("\nMenu:")
-	print("1. Add User")
-	print("2. Add Greeting for User")
-	print("3. View All Users")
-	print("4. View Greetings for User")
-	print("5. Update Greeting")
-	print("6. Delete Greeting")
-	print("7. Exit")
+    """Print the main menu."""
+    print("\n=== SQL Relational Database Demo ===")
+    print("If you do not see the menu, your terminal may not support interactive input.\n")
+    print("Menu:")
+    print("1. Add User")
+    print("2. Add Order for User")
+    print("3. View All Users")
+    print("4. View Orders for User")
+    print("5. Update User Email")
+    print("6. Delete Order")
+    print("7. Join: List All User Orders")
+    print("8. Aggregate: Order Stats")
+    print("9. Filter Orders by Date Range")
+    print("10. Exit")
 
-def add_user(db):
-	name = input("Enter user name: ")
-	email = input("Enter user email: ")
-	user = {"name": name, "email": email, "created_at": datetime.now()}
-	result = db.users.insert_one(user)
-	print(f"User added with id: {result.inserted_id}")
 
-def add_greeting(db):
-	user_id = input("Enter user id for greeting: ")
-	message = input("Enter greeting message: ")
-	greeting = {
-		"user_id": ObjectId(user_id),
-		"message": message,
-		"created_at": datetime.now()
-	}
-	result = db.greetings.insert_one(greeting)
-	print(f"Greeting added with id: {result.inserted_id}")
+def parse_int_input(prompt):
+    """Prompt the user for an integer; allow commas and whitespace, retry until valid."""
+    while True:
+        raw = input(prompt)
+        if raw is None:
+            print("No input provided.")
+            continue
+        clean = raw.strip().replace(',', '').replace(' ', '')
+        try:
+            return int(clean)
+        except ValueError:
+            print("Invalid integer. Please enter a numeric value (commas allowed).")
 
-def view_users(db):
-	print("\nAll Users:")
-	for user in db.users.find():
-		print(f"{user['_id']}: {user['name']} ({user['email']})")
 
-def view_greetings_for_user(db):
-	user_id = input("Enter user id to view greetings: ")
-	print(f"\nGreetings for user {user_id}:")
-	for greeting in db.greetings.find({"user_id": ObjectId(user_id)}):
-		print(f"{greeting['_id']}: {greeting['message']} (at {greeting['created_at']})")
+def parse_float_input(prompt):
+    """Prompt the user for a float; allow commas and whitespace, retry until valid."""
+    while True:
+        raw = input(prompt)
+        if raw is None:
+            print("No input provided.")
+            continue
+        clean = raw.strip().replace(',', '').replace(' ', '')
+        try:
+            return float(clean)
+        except ValueError:
+            print("Invalid number. Please enter a numeric value (commas allowed).")
 
-def update_greeting(db):
-	greeting_id = input("Enter greeting id to update: ")
-	new_message = input("Enter new message: ")
-	result = db.greetings.update_one(
-		{"_id": ObjectId(greeting_id)},
-		{"$set": {"message": new_message}}
-	)
-	if result.modified_count:
-		print("Greeting updated.")
-	else:
-		print("Greeting not found or not updated.")
-
-def delete_greeting(db):
-	greeting_id = input("Enter greeting id to delete: ")
-	result = db.greetings.delete_one({"_id": ObjectId(greeting_id)})
-	if result.deleted_count:
-		print("Greeting deleted.")
-	else:
-		print("Greeting not found.")
 
 def main():
-	db = get_db()
-	print("Connected to MongoDB Atlas cloud database!\n")
-	while True:
-		print_menu()
-		choice = input("Enter your choice: ")
-		if choice == '1':
-			add_user(db)
-		elif choice == '2':
-			add_greeting(db)
-		elif choice == '3':
-			view_users(db)
-		elif choice == '4':
-			view_greetings_for_user(db)
-		elif choice == '5':
-			update_greeting(db)
-		elif choice == '6':
-			delete_greeting(db)
-		elif choice == '7':
-			print("Exiting app.")
-			break
-		else:
-			print("Invalid choice. Try again.")
+    """Main program loop for SQL database demo."""
+    conn = connect_db()
+    create_tables(conn)
+    while True:
+        print_menu()
+        import sys
+        sys.stdout.flush()
+        try:
+            choice = input("Enter choice: ")
+        except Exception as e:
+            print(f"ERROR: Exception during input(): {e}")
+            break
+        if choice == "1":
+            name = input("Enter user name: ")
+            email = input("Enter user email: ")
+            try:
+                insert_user(conn, name, email)
+                print("User added.")
+            except sqlite3.IntegrityError:
+                print("That email is already in use. Please enter a different email.")
+        elif choice == "2":
+            users = get_all_users(conn)
+            user_id = parse_int_input("Enter user ID for order: ")
+            amount = parse_float_input("Enter order amount: ")
+            order_date = input("Enter order date (YYYY-MM-DD): ")
+            insert_order(conn, user_id, amount, order_date)
+            print("Order added.")
+        elif choice == "3":
+            get_all_users(conn)
+        elif choice == "4":
+            user_id = parse_int_input("Enter user ID to view orders: ")
+            get_orders_for_user(conn, user_id)
+        elif choice == "5":
+            user_id = parse_int_input("Enter user ID to update email: ")
+            new_email = input("Enter new email: ")
+            try:
+                update_user_email(conn, user_id, new_email)
+                print("User email updated.")
+            except sqlite3.IntegrityError:
+                print("That email is already in use. Please enter a different email.")
+        elif choice == "6":
+            order_id = parse_int_input("Enter order ID to delete: ")
+            delete_order(conn, order_id)
+            print("Order deleted.")
+        elif choice == "7":
+            join_users_orders(conn)
+        elif choice == "8":
+            aggregate_order_stats(conn)
+        elif choice == "9":
+            start_date = input("Enter start date (YYYY-MM-DD): ")
+            end_date = input("Enter end date (YYYY-MM-DD): ")
+            filter_orders_by_date(conn, start_date, end_date)
+        elif choice == "10":
+            print("Exiting.")
+            break
+        else:
+            print("Invalid choice. Try again.")
+    conn.close()
 
-if __name__ == "__main__":
-	main()
+
+if __name__ == '__main__':
+    main()

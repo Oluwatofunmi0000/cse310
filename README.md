@@ -1,36 +1,38 @@
-# Cloud Databases: Overview and Implementation
+# SQL Relational Databases: Overview and Implementation
 
-A **cloud database** is a database service built and accessed through a cloud platform. Cloud databases offer scalability, high availability, and remote access, making them ideal for modern web and enterprise applications. Examples include AWS RDS, Azure SQL Database, and Google Cloud SQL.
+This project demonstrates the use of a SQL relational database in Python. It covers the basics of creating a database, defining tables, inserting data, querying, updating, and deleting records using SQL commands. The project uses SQLite for simplicity, but the code structure can be adapted for other relational databases such as MySQL or PostgreSQL.
 
-## How This Project Simulates a Cloud Database
+## Project Objectives
 
-This project demonstrates the core concepts of connecting to and interacting with a database, simulating a cloud database connection in the code. The `connect_to_cloud_database()` function in the code represents where you would connect to a real cloud database using a provider's SDK or connection string. For demonstration, the app uses SQLite locally, but the structure and logic can be adapted for any cloud database.
+- Demonstrate understanding of relational database concepts (tables, rows, columns, primary keys, foreign keys)
+- Implement basic CRUD (Create, Read, Update, Delete) operations in Python using SQL
+- Practice database schema design and data manipulation
+- Document the development process and provide a code walkthrough
 
-### Example: Adapting to a Real Cloud Database
+## Example: SQLite Database Operations
 
-To use a real cloud database, you would replace the SQLite connection with a connection string for your cloud provider. For example:
+The code includes functions to:
 
-```
-# Example for Azure SQL Database (using pyodbc):
-# import pyodbc
-# conn = pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server};SERVER=your_server.database.windows.net;DATABASE=your_db;UID=your_user;PWD=your_password')
-```
+- Create a database and tables
+- Insert sample data
+- Query and display records
+- Update and delete records
 
-This approach allows your application to scale and be accessed from anywhere, leveraging the benefits of cloud infrastructure.
+You can adapt the code to use other SQL databases by changing the connection method and SQL dialect as needed.
 
 # Overview
 
-This project demonstrates a simple Python program that prints "Hello World" to the screen. The goal is to practice basic software development skills and further my learning as a software engineer by building, documenting, and sharing a simple application.
+This project demonstrates a simple Python application that interacts with a SQL relational database. The goal is to practice database programming, reinforce understanding of SQL operations, and document the process for learning and sharing.
 
-This software was created to reinforce my understanding of the development workflow, including coding, documentation, version control, and video demonstration.
+The software was created to reinforce my understanding of the development workflow, including coding, documentation, version control, and video demonstration.
 
-[Software Demo Video](https://youtu.be/dCwtUeSMUz0)
+[Software Demo Video](https://youtu.be/nzGGZjkEh_s)
 
-(github link) [https://github.com/Oluwatofunmi0000/cse310]
+(GitHub link) [https://github.com/Oluwatofunmi0000/cse310]
 
-# Cloud Database Integration (Simulation)
+# SQL Database Integration
 
-This project simulates connecting to a cloud database as part of the Cloud Databases module requirement. In a real-world scenario, the app could connect to a cloud database service such as AWS RDS, Azure SQL Database, or Google Cloud SQL by using the appropriate SDK or connection string. For demonstration and simplicity, this project uses SQLite locally, but the code includes a function (`connect_to_cloud_database`) to show where and how a cloud connection would be established.
+This project uses SQLite to simulate a SQL relational database. All database operations are performed locally, but the code is structured so it can be adapted to other SQL databases. The main Python file demonstrates how to connect to the database, create tables, and perform CRUD operations.
 
 # Development Environment
 
@@ -38,13 +40,13 @@ This project simulates connecting to a cloud database as part of the Cloud Datab
 
 The following module was selected and completed for this project:
 
-- [x] Cloud Databases
+- [ ] Cloud Databases
 - [ ] Data Analysis
 - [ ] Game Framework
 - [ ] GIS Mapping
 - [ ] Mobile App
 - [ ] Networking
-- [ ] SQL Relational Databases
+- [x] SQL Relational Databases
 - [ ] Web Apps
 - [ ] Language – C++
 - [ ] Language – Java
