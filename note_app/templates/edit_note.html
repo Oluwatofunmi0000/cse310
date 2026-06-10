@@ -1,0 +1,26 @@
+{% extends 'base.html' %} {% block content %}
+<div class="mb-4">
+  <a class="btn btn-secondary" href="{{ url_for('index') }}">Back to Notes</a>
+</div>
+<div class="card">
+  <div class="card-body">
+    <h2 class="card-title">{{ action }}</h2>
+    <form method="post">
+      {{ form.hidden_tag() }}
+      <div class="mb-3">
+        {{ form.title.label(class_='form-label') }} {{
+        form.title(class_='form-control') }}
+      </div>
+      <div class="mb-3">
+        {{ form.tags.label(class_='form-label') }} {{
+        form.tags(class_='form-control') }}
+      </div>
+      <div class="mb-3">
+        {{ form.body.label(class_='form-label') }} {{
+        form.body(class_='form-control', rows=8) }}
+      </div>
+      <button class="btn btn-primary">{{ action }}</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

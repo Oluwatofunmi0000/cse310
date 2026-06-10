@@ -1,0 +1,40 @@
+{% extends 'base.html' %} {% block content %}
+<div class="mb-4">
+  <a class="btn btn-secondary" href="{{ url_for('index') }}">Back to Notes</a>
+</div>
+<div class="card">
+  <div class="card-body">
+    <h2 class="card-title">{{ note.title }}</h2>
+    {% if note.tags %}
+    <p class="text-muted mb-2">Tags: {{ note.tags }}</p>
+    {% endif %}
+    <p class="card-text white-space-pre-wrap">
+      {{ note.body or 'No content.' }}
+    </p>
+    <hr />
+    <p class="mb-1">
+      <strong>Created:</strong> {{ note.created_at.strftime('%Y-%m-%d %H:%M') }}
+    </p>
+    <p class="mb-3">
+      <strong>Updated:</strong> {{ note.updated_at.strftime('%Y-%m-%d %H:%M') }}
+    </p>
+    <a
+      class="btn btn-primary"
+      href="{{ url_for('edit_note', note_id=note.id) }}"
+      >Edit</a
+    >
+    <form
+      class="d-inline"
+      method="post"
+      action="{{ url_for('delete_note', note_id=note.id) }}"
+    >
+      <button
+        class="btn btn-danger"
+        onclick="return confirm('Delete this note?');"
+      >
+        Delete
+      </button>
+    </form>
+  </div>
+</div>
+{% endblock %}
